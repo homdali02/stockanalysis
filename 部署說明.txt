@@ -1,0 +1,31 @@
+智富股票分析工具｜可自行發布版本
+
+一、只上傳一個網頁檔
+將 index.html 上傳到網站目錄，再開啟你的網站網址。也可以直接雙擊 index.html。
+技術指標、圖表、CSV 匯入、模擬體驗、手動財務估值與報告匯出均在瀏覽器內運作，不需安裝套件。
+只有 HTML 的靜態主機無法自動提供行情 API；輸入股票代號抓取線上行情需使用下方後端。查詢失敗會顯示原因，不會改成模擬行情。
+
+二、完整線上行情版（Cloudflare Workers）
+worker.mjs 已包含完整 HTML 與後端，不需額外上傳 index.html，也不依賴原私人網站或 Sites 服務。
+方法 A：在 Cloudflare Workers 建立 Worker，將 worker.mjs 內容完整貼入程式編輯器並部署；使用該 Worker 的網址開啟工具。
+方法 B：已安裝 Node.js 的電腦可在這個資料夾執行 npx wrangler deploy，依提示登入 Cloudflare 後發布。
+wrangler.toml 是部署設定，worker.mjs 是入口。
+此版本沒有預設登入限制；網站的存取權請依你的主機或 Cloudflare 設定管理。
+
+三、網頁與後端分開架站
+將 index.html 上傳你的主機，將 worker.mjs 部署在 Cloudflare Workers。
+展開網頁「線上行情連線設定」，將 API 改成 https://你的Worker網域/api/stock 。
+後端已允許跨網域讀取公開行情，不需要金鑰。請使用你自己的後端網址。
+
+四、使用方式
+台股：2330、2317 或 2330.TW；上櫃：6488.TWO；美股：AAPL、NVDA。
+CSV 標題：date,open,high,low,close,volume。日期為 YYYY-MM-DD；至少 60 筆、最多 5,000 筆，日期不可重複。請保持價格調整基準一致。
+台股財務資料可能由證交所同日收盤價與倍數反推，並非直接取得財報；上櫃、美股財務數字需手動輸入。
+目標倍數為可修改的起點，請依公司與同業調整。估值不是保證報酬。ETF 不自動帶入企業估值。
+行情來源可能延遲、限流或更改服務，失敗時可重試或使用 CSV。
+
+檔案清單
+index.html：單檔網頁，內含 CSS、圖表及全部計算，不載入外部程式庫。
+worker.mjs：可部署的獨立後端，同時提供同一網頁與 /api/stock。
+wrangler.toml：Cloudflare Workers 部署設定。
+部署說明.txt：本說明。
